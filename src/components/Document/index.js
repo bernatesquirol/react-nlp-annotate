@@ -107,8 +107,14 @@ export default function Document({
         changeMouseDown(false)
       }}
     >
-      {sequence.map((seq, i) => (
-        <SequenceItem
+      {sequence.map((seq, i) => {
+        if (seq.text=='\n') return <div style={{width:'100%'}}></div>
+        let regTag = /<b>(.*)<\/b>/g
+        let findTags = regTag.exec(seq.text)
+        if (findTags) {
+          return <div style={{width:'100%'}} ><b>{findTags[1]}</b></div>
+        }
+        return <SequenceItem
           {...seq}
           sequenceItemIndex={i}
           sequenceItemPositionsRef={sequenceItemPositionsRef}
@@ -128,7 +134,7 @@ export default function Document({
           color={seq.color || colorLabelMap[seq.label]}
           key={i}
         />
-      ))}
+      })}
       {firstSequenceItem && !secondSequenceItem && (
         <ArrowToMouse
           startAt={

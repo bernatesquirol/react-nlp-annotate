@@ -2,13 +2,14 @@
 
 const stringToSequence = (
   doc: string,
-  sepRe: RegExp | string = /[a-zA-ZÀ-ÿ]+/g
+  sepRe: RegExp | string = /(<b>.*<\/b>)|([a-zA-ZÀ-ÿ\n.,;-])+/g
 ) => {
   if (typeof sepRe === "string") {
     sepRe = new RegExp(sepRe, "g")
   }
   let m
   let indices = [0]
+  doc = doc.replace(/\n/g, ' \n ')
   do {
     m = sepRe.exec(doc)
     if (m) {
@@ -24,7 +25,10 @@ const stringToSequence = (
         .toString(36)
         .slice(-6)
     }))
-    .filter(s => s.text.length > 0)
+    .filter((s,i, array) => {
+      if (i>0 && s.text==' ' && array[i-1]=='\n') return false
+      return s.text.length > 0
+    })
 }
 
 export default stringToSequence
